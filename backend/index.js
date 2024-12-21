@@ -11,7 +11,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // Importing Models
-const { HoldingsModel } = require('./models/holdingsModel');
+const { HoldingsModel } = require('./models/HoldingsModel');
 const { PositionModel } = require('./models/PositionModel');
 const UserModel = require('./schema/UsersSchema');
 
