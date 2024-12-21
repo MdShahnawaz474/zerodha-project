@@ -1,262 +1,120 @@
 const express = require('express');
 const app = express();
 require('dotenv').config();
-const mongoose = require("mongoose");
-const cors = require("cors")
-const bodyParser = require("body-parser")
+const mongoose = require('mongoose');
+const cors = require('cors');
+const bodyParser = require('body-parser');
 const PORT = process.env.PORT || 8000;
 const uri = process.env.MONGO_URL;
 
 app.use(cors());
 app.use(bodyParser.json());
 
-const { HoldingsModel } = require("./models/holdingsModel");
+// Importing Models
+const { HoldingsModel } = require('./models/holdingsModel');
 const { PositionModel } = require('./models/PositionModel');
+const UserModel = require('./schema/UsersSchema');
+
+// Authentication (Login/Register User)
+app.post('/auth', async (req, res) => {
+    const { mobileNumber } = req.body;
+
+    if (!mobileNumber) {
+        return res.status(400).json({ error: 'Mobile number is required' });
+    }
+
+    try {
+        let user = await UserModel.findOne({ mobileNumber }).exec();
+
+        if (!user) {
+            user = new UserModel({ mobileNumber });
+            await user.save();
+            return res.status(201).json({ message: 'User registered successfully', user });
+        }
+
+        res.status(200).json({ message: 'User logged in successfully', user });
+    } catch (error) {
+        console.error('Error during user authentication:', error);
+        res.status(500).json({ error: 'Internal server error', details: error.message });
+    }
+});
+
+// Buy Stock Route
 
 
+// Sell Stock Route
 
 
-// app.get("/addHoldings", async (req, res) => {
-//     holdings = [
-//         {
-//           name: "BHARTIARTL",
-//           qty: 2,
-//           avg: 538.05,
-//           price: 541.15,
-//           net: "+0.58%",
-//           day: "+2.99%",
-//         },
-//         {
-//           name: "HDFCBANK",
-//           qty: 2,
-//           avg: 1383.4,
-//           price: 1522.35,
-//           net: "+10.04%",
-//           day: "+0.11%",
-//         },
-//         {
-//           name: "HINDUNILVR",
-//           qty: 1,
-//           avg: 2335.85,
-//           price: 2417.4,
-//           net: "+3.49%",
-//           day: "+0.21%",
-//         },
-//         {
-//           name: "INFY",
-//           qty: 1,
-//           avg: 1350.5,
-//           price: 1555.45,
-//           net: "+15.18%",
-//           day: "-1.60%",
-//           isLoss: true,
-//         },
-//         {
-//           name: "ITC",
-//           qty: 5,
-//           avg: 202.0,
-//           price: 207.9,
-//           net: "+2.92%",
-//           day: "+0.80%",
-//         },
-//         {
-//           name: "KPITTECH",
-//           qty: 5,
-//           avg: 250.3,
-//           price: 266.45,
-//           net: "+6.45%",
-//           day: "+3.54%",
-//         },
-//         {
-//           name: "M&M",
-//           qty: 2,
-//           avg: 809.9,
-//           price: 779.8,
-//           net: "-3.72%",
-//           day: "-0.01%",
-//           isLoss: true,
-//         },
-//         {
-//           name: "RELIANCE",
-//           qty: 1,
-//           avg: 2193.7,
-//           price: 2112.4,
-//           net: "-3.71%",
-//           day: "+1.44%",
-//         },
-//         {
-//           name: "SBIN",
-//           qty: 4,
-//           avg: 324.35,
-//           price: 430.2,
-//           net: "+32.63%",
-//           day: "-0.34%",
-//           isLoss: true,
-//         },
-//         {
-//           name: "SGBMAY29",
-//           qty: 2,
-//           avg: 4727.0,
-//           price: 4719.0,
-//           net: "-0.17%",
-//           day: "+0.15%",
-//         },
-//         {
-//           name: "TATAPOWER",
-//           qty: 5,
-//           avg: 104.2,
-//           price: 124.15,
-//           net: "+19.15%",
-//           day: "-0.24%",
-//           isLoss: true,
-//         },
-//         {
-//           name: "TCS",
-//           qty: 1,
-//           avg: 3041.7,
-//           price: 3194.8,
-//           net: "+5.03%",
-//           day: "-0.25%",
-//           isLoss: true,
-//         },
-//         {
-//           name: "WIPRO",
-//           qty: 4,
-//           avg: 489.3,
-//           price: 577.75,
-//           net: "+18.08%",
-//           day: "+0.32%",
-//         },
-//       ]
-//   holdings.forEach((item) => {
-//     let newHolding = new HoldingsModel({
-//       name: item.name,
-//       qty: item.qty,
-//       avg: item.avg,
-//       price: item.price,
-//       net: item.net,
-//       day: item.day,
-//     });
+// Get User's Holdings
+app.get('/holdings/:mobileNumber', async (req, res) => {
+    const { mobileNumber } = req.params;
 
-//     newHolding.save();
-//   });
-//   res.send("Done!");
-// });
+    try {
+        let user = await UserModel.findOne({ mobileNumber });
 
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
 
-// app.get("/allpostions", async(req,res)=>{
-//   let  positions = [
-//         {
-//           product: "CNC",
-//           name: "EVEREADY",
-//           qty: 2,
-//           avg: 316.27,
-//           price: 312.35,
-//           net: "+0.58%",
-//           day: "-1.24%",
-//           isLoss: true,
-//         },
-//         {
-//           product: "MIS",
-//           name: "JUBLFOOD",
-//           qty: 1,
-//           avg: 3124.75,
-//           price: 3082.65,
-//           net: "+10.04%",
-//           day: "-1.35%",
-//           isLoss: true,
-//         },
-//         {
-//           product: "NRML",
-//           name: "TATASTEEL",
-//           qty: 5,
-//           avg: 450.50,
-//           price: 455.00,
-//           net: "+1.00%",
-//           day: "+0.50%",
-//           isLoss: false,
-//         },
-//         {
-//           product: "CNC",
-//           name: "RELIANCE",
-//           qty: 3,
-//           avg: 2100.00,
-//           price: 2080.00,
-//           net: "-0.95%",
-//           day: "-0.50%",
-//           isLoss: true,
-//         },
-//         {
-//           product: "MIS",
-//           name: "INFY",
-//           qty: 4,
-//           avg: 1500.00,
-//           price: 1520.00,
-//           net: "+1.33%",
-//           day: "+0.67%",
-//           isLoss: false,
-//         },
-//         {
-//           product: "NRML",
-//           name: "HDFCBANK",
-//           qty: 6,
-//           avg: 1400.00,
-//           price: 1380.00,
-//           net: "-1.43%",
-//           day: "-0.71%",
-//           isLoss: true,
-//         },
-//         {
-//           product: "CNC",
-//           name: "ITC",
-//           qty: 10,
-//           avg: 200.00,
-//           price: 205.00,
-//           net: "+2.50%",
-//           day: "+1.25%",
-//           isLoss: false,
-//         },
-//       ]
+        let holdings = await HoldingsModel.find({ userId: user._id });
+        res.status(200).json(holdings);
+    } catch (error) {
+        console.error('Error fetching holdings:', error);
+        res.status(500).json({ error: 'Internal server error', details: error.message });
+    }
+});
 
-//       positions.forEach((item) => {
-//             let newPosition = new PositionModel({
-//               product: item.product,
-//               name: item.name,
-//               qty: item.qty,
-//               avg: item.avg,
-//               price: item.price,
-//               net: item.net,
-//               day: item.day,
-//               isLoss: item.isLoss,
-//             });
-        
-//             newPosition.save();
-//           });
-//           res.send("Done!");
-// })
+// Get User's Positions (Sold Stocks)
+app.get('/positions/:mobileNumber', async (req, res) => {
+    const { mobileNumber } = req.params;
 
+    try {
+        let user = await UserModel.findOne({ mobileNumber });
 
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
 
-// Correctly handle mongoose connection
+        let positions = await PositionModel.find({ userId: user._id });
+        res.status(200).json(positions);
+    } catch (error) {
+        console.error('Error fetching positions:', error);
+        res.status(500).json({ error: 'Internal server error', details: error.message });
+    }
+});
 
-app.get("/allPosition", async(req,res)=>{
-    let allPostions = await PositionModel.find({})
-    res.json(allPostions)
-})
+// Get All Positions (for admin or display purposes)
+app.get('/allPositions', async (req, res) => {
+    try {
+        let positions = await PositionModel.find({});
+        res.status(200).json(positions);
+    } catch (error) {
+        console.error('Error fetching all positions:', error);
+        res.status(500).json({ error: 'Internal server error', details: error.message });
+    }
+});
 
-app.get("/allHoldings", async (req,res)=>{
-    let allHolding = await HoldingsModel.find({})
-    res.json(allHolding)
-})
+// Get All Holdings (for admin or display purposes)
+app.get('/allHoldings', async (req, res) => {
+    try {
+        let holdings = await HoldingsModel.find({});
+        res.status(200).json(holdings);
+    } catch (error) {
+        console.error('Error fetching all holdings:', error);
+        res.status(500).json({ error: 'Internal server error', details: error.message });
+    }
+});
 
+// Connecting to MongoDB
 mongoose.connect(uri)
     .then(() => {
-        console.log("Database connected");
+        console.log('Database connected');
     })
     .catch((err) => {
-        console.error("Error:", err);
+        console.error('Error:', err);
     });
 
+// Starting the server
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
