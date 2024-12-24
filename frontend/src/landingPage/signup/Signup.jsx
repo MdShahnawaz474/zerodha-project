@@ -19,10 +19,10 @@ const Signup = () => {
   }
 
     try {
-      const response = await axios.post('http://localhost:8000/auth', { mobileNumber });
+      const response = await axios.post('https://zerodha-project-cr0x.onrender.com/auth', { mobileNumber });
       alert(response.data.message);
       if ( response.status === 200 || response.status === 201) {
-      window.location.href="/product";
+      window.location.href="https://zerodha-project-3j8ty6ihq-md-shahnawazs-projects-c0dd0245.vercel.app";
       }
     } catch (error) {
       alert("Internal server error");
