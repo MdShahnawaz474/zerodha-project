@@ -14,6 +14,7 @@ import { Apps } from '@mui/icons-material';
 import TopBar from './components/TopBar';
 import { GeneralContextProvider } from './components/GeneralContext';
 import WatchList from './components/WatchList';
+import NotFound from './NotFound';
 // import Dashboard from './components/Dashboard';
 
 function App() {
@@ -36,6 +37,8 @@ function App() {
               <Route path="/positions" element={<Positions />} />
               <Route path="/funds" element={<Funds />} />
               <Route path="/apps" element={<Apps />} />
+              <Route path="*" element={<NotFound/>} />
+            
             </Routes>
           </div>
         </div>
