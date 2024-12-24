@@ -9,7 +9,7 @@ const Holdings = () => {
   const [profitLoss, setProfitLoss] = useState(0);
 
   useEffect(() => {
-    axios.get("http://localhost:8000/allHoldings").then((res) => {
+    axios.get("https://zerodha-project-cr0x.onrender.com/allHoldings").then((res) => {
       const holdingsData = res.data;
       setAllHoldings(holdingsData);
 

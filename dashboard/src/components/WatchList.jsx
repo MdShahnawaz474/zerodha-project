@@ -154,12 +154,12 @@ const WatchListActions = ({ uid }) => {
           arrow
           TransitionComponent={Grow}
         >
-          <button className="actions" >
+          <button className="action" >
             <BarChartOutlined className="icon" />
           </button>
         </Tooltip>
         <Tooltip title="More" placement="top" arrow TransitionComponent={Grow}>
-          <button className="actions">
+          <button className="action">
             <MoreHoriz className="icon" />
           </button>
         </Tooltip>
