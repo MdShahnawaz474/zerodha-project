@@ -118,11 +118,10 @@ const Team = () => {
         }}>
           <img
             style={{
-                height: "280px",
+              height: "280px",
               marginBottom: "10px",
               borderRadius: "100%",
-              padding: "20px 50px",
-              paddingBottom:"80px"
+               padding: "20px 50px ",
             }}
             src={Director2}/>
             <h5>Austin Prakesh</h5>
